@@ -1,0 +1,11 @@
+-r requirements.txt
+
+# Testing
+pytest==8.3.4
+pytest-cov==6.0.0
+
+# Linting / Type checking
+ruff==0.8.2
+mypy==1.13.0
+types-passlib==1.7.7.20240819
+types-python-jose==3.3.4.20240106

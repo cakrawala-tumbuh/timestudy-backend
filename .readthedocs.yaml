@@ -1,0 +1,22 @@
+# Read the Docs configuration — timestudy-backend
+# https://docs.readthedocs.io/en/stable/config-file/v2.html
+
+version: 2
+
+build:
+  os: ubuntu-24.04
+  tools:
+    python: "3.11"
+
+# Install the package with dev extras so Sphinx and all plugins are available
+python:
+  install:
+    - method: pip
+      path: .
+      extra_requirements:
+        - dev
+
+# Sphinx is the documentation tool — conf.py lives in docs/
+sphinx:
+  configuration: docs/conf.py
+  fail_on_warning: false
