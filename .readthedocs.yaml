@@ -8,13 +8,10 @@ build:
   tools:
     python: "3.11"
 
-# Install the package with dev extras so Sphinx and all plugins are available
+# Install only the Sphinx dependencies needed to build the docs
 python:
   install:
-    - method: pip
-      path: .
-      extra_requirements:
-        - dev
+    - requirements: docs/requirements.txt
 
 # Sphinx is the documentation tool — conf.py lives in docs/
 sphinx:
