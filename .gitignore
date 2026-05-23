@@ -34,6 +34,7 @@ env/
 
 alembic/versions/__pycache__/
 
-# Generated documentation (built by CI, deployed to GitHub Pages)
-docs/
+# Generated documentation build output
+docs/_build/
+docs/_autoapi/
 
