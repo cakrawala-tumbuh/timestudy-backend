@@ -40,16 +40,12 @@ class TestListRespondents:
         assert data["items"][0]["resp_id"] == "R-001"
 
     def test_search_by_name(self, client, auth_headers, sample_respondent):
-        response = client.get(
-            "/api/v1/respondents?search=Budi", headers=auth_headers
-        )
+        response = client.get("/api/v1/respondents?search=Budi", headers=auth_headers)
         assert response.status_code == 200
         assert response.json()["total"] == 1
 
     def test_search_no_match(self, client, auth_headers, sample_respondent):
-        response = client.get(
-            "/api/v1/respondents?search=ZZZNOMATCH", headers=auth_headers
-        )
+        response = client.get("/api/v1/respondents?search=ZZZNOMATCH", headers=auth_headers)
         assert response.status_code == 200
         assert response.json()["total"] == 0
 

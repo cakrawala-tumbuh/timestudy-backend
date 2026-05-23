@@ -15,9 +15,7 @@ TEST_DATABASE_URL = "sqlite:///:memory:"
 
 @pytest.fixture(scope="session")
 def engine():
-    _engine = create_engine(
-        TEST_DATABASE_URL, connect_args={"check_same_thread": False}
-    )
+    _engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
     Base.metadata.create_all(bind=_engine)
     yield _engine
     Base.metadata.drop_all(bind=_engine)

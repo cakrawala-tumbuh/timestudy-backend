@@ -116,9 +116,7 @@ class TestOAuthClientManagement:
 
 
 class TestOAuthAuthorize:
-    def test_get_authorize_shows_login_page(
-        self, client, oauth_client, respondent_with_pin
-    ):
+    def test_get_authorize_shows_login_page(self, client, oauth_client, respondent_with_pin):
         _, challenge = make_pkce()
         response = client.get(
             "/oauth/authorize",
