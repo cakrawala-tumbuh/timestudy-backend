@@ -33,7 +33,7 @@ class DailyLogCreate(DailyLogBase):
     """Payload for creating or upserting a daily log (submitted by Android app)."""
 
     @model_validator(mode="after")
-    def validate_total_pct(self) -> "DailyLogCreate":
+    def validate_total_pct(self) -> DailyLogCreate:
         """Validate that the sum of all seven time-category percentages does not exceed 110%."""
         total = (
             self.pct_core

@@ -11,9 +11,7 @@ class OAuthClientBase(BaseModel):
     """Shared fields for creating and updating an OAuth2 client registration."""
 
     client_name: str = Field(..., min_length=1, max_length=100)
-    redirect_uris: str = Field(
-        ..., description="Space-separated list of allowed redirect URIs"
-    )
+    redirect_uris: str = Field(..., description="Space-separated list of allowed redirect URIs")
     scope: str = Field(default="sync", description="Space-separated list of allowed scopes")
     grant_types: str = Field(default="authorization_code refresh_token")
     response_types: str = Field(default="code")

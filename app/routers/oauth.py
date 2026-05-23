@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 import secrets
 
-from fastapi import APIRouter, Depends, Form, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, Form, HTTPException, Query, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.orm import Session
 
@@ -14,7 +14,12 @@ from app.dependencies import get_current_user
 from app.models.oauth import OAuthClient
 from app.models.user import User
 from app.schemas.common import PagedResponse
-from app.schemas.oauth import OAuthClientCreate, OAuthClientResponse, OAuthClientUpdate, TokenResponse
+from app.schemas.oauth import (
+    OAuthClientCreate,
+    OAuthClientResponse,
+    OAuthClientUpdate,
+    TokenResponse,
+)
 from app.services.oauth_service import (
     authenticate_respondent,
     create_authorization_code,
@@ -76,11 +81,13 @@ AUTHORIZE_HTML = """
       <input type="hidden" name="code_challenge_method" value="{code_challenge_method}">
       <div class="group">
         <label for="resp_id">Kode Responden</label>
-        <input id="resp_id" name="resp_id" type="text" placeholder="Contoh: R-001" autocomplete="username">
+        <input id="resp_id" name="resp_id" type="text"
+               placeholder="Contoh: R-001" autocomplete="username">
       </div>
       <div class="group">
         <label for="pin">PIN</label>
-        <input id="pin" name="pin" type="password" placeholder="PIN Anda" autocomplete="current-password">
+        <input id="pin" name="pin" type="password"
+               placeholder="PIN Anda" autocomplete="current-password">
       </div>
       <button type="submit">Masuk &amp; Otorisasi</button>
     </form>
@@ -90,7 +97,12 @@ AUTHORIZE_HTML = """
 """
 
 
-@router.get("/oauth/authorize", response_class=HTMLResponse, response_model=None, include_in_schema=False)
+@router.get(
+    "/oauth/authorize",
+    response_class=HTMLResponse,
+    response_model=None,
+    include_in_schema=False,
+)
 def authorize_get(
     response_type: str = Query(...),
     client_id: str = Query(...),
@@ -115,7 +127,8 @@ def authorize_get(
         )
     if code_challenge_method != "S256":
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Only S256 code_challenge_method supported"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only S256 code_challenge_method supported",
         )
 
     html = AUTHORIZE_HTML.format(
@@ -131,7 +144,12 @@ def authorize_get(
     return HTMLResponse(html)
 
 
-@router.post("/oauth/authorize", response_class=HTMLResponse, response_model=None, include_in_schema=False)
+@router.post(
+    "/oauth/authorize",
+    response_class=HTMLResponse,
+    response_model=None,
+    include_in_schema=False,
+)
 def authorize_post(
     client_id: str = Form(...),
     redirect_uri: str = Form(...),
@@ -201,9 +219,7 @@ def token(
     """Issue an OAuth2 access/refresh token pair."""
     client = get_client_by_client_id(db, client_id)
     if not client:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid client_id"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid client_id")
 
     if grant_type == "authorization_code":
         if not code or not redirect_uri or not code_verifier:
@@ -316,9 +332,7 @@ def create_client(
     return client
 
 
-@clients_router.get(
-    "/{client_id}", response_model=OAuthClientResponse, summary="Get OAuth2 client"
-)
+@clients_router.get("/{client_id}", response_model=OAuthClientResponse, summary="Get OAuth2 client")
 def get_client(
     client_id: str,
     db: Session = Depends(get_db),

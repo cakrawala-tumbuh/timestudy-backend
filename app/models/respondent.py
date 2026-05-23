@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import Boolean, DateTime, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -28,15 +28,13 @@ class Respondent(Base):
         String(255), nullable=True, comment="Hashed PIN for OAuth2 login"
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=lambda: datetime.now(timezone.utc)
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
     )
 
-    daily_logs: Mapped[list["DailyLog"]] = relationship(  # noqa: F821
+    daily_logs: Mapped[list[DailyLog]] = relationship(  # noqa: F821
         "DailyLog", back_populates="respondent", cascade="all, delete-orphan"
     )

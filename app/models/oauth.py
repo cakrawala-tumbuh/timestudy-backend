@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import secrets
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import Boolean, DateTime, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
@@ -21,9 +21,7 @@ class OAuthClient(Base):
         primary_key=True,
         default=lambda: secrets.token_urlsafe(32),
     )
-    client_id: Mapped[str] = mapped_column(
-        String(48), unique=True, index=True, nullable=False
-    )
+    client_id: Mapped[str] = mapped_column(String(48), unique=True, index=True, nullable=False)
     client_name: Mapped[str] = mapped_column(String(100), nullable=False)
     client_secret: Mapped[str | None] = mapped_column(
         String(120),
@@ -42,13 +40,11 @@ class OAuthClient(Base):
     response_types: Mapped[str] = mapped_column(Text, nullable=False, default="code")
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=lambda: datetime.now(timezone.utc)
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
     )
 
     def check_redirect_uri(self, redirect_uri: str) -> bool:
@@ -81,19 +77,15 @@ class OAuthAuthorizationCode(Base):
     code: Mapped[str] = mapped_column(String(128), unique=True, nullable=False, index=True)
     # PKCE fields (RFC 7636)
     code_challenge: Mapped[str] = mapped_column(String(128), nullable=False)
-    code_challenge_method: Mapped[str] = mapped_column(
-        String(10), nullable=False, default="S256"
-    )
+    code_challenge_method: Mapped[str] = mapped_column(String(10), nullable=False, default="S256")
     redirect_uri: Mapped[str] = mapped_column(Text, nullable=False)
     scope: Mapped[str] = mapped_column(Text, nullable=False, default="sync")
     expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=lambda: datetime.now(timezone.utc)
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
 
     def is_expired(self) -> bool:
         """Return True if this authorization code has expired."""
-        return datetime.now(timezone.utc) > self.expires_at.replace(tzinfo=timezone.utc)
+        return datetime.now(UTC) > self.expires_at.replace(tzinfo=UTC)
 
 
 class OAuthToken(Base):
@@ -113,14 +105,12 @@ class OAuthToken(Base):
     token_type: Mapped[str] = mapped_column(String(20), nullable=False, default="Bearer")
     scope: Mapped[str] = mapped_column(Text, nullable=False, default="sync")
     expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=lambda: datetime.now(timezone.utc)
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     def is_expired(self) -> bool:
         """Return True if this access token has expired."""
-        return datetime.now(timezone.utc) > self.expires_at.replace(tzinfo=timezone.utc)
+        return datetime.now(UTC) > self.expires_at.replace(tzinfo=UTC)
 
     def is_revoked(self) -> bool:
         """Return True if this token has been explicitly revoked."""

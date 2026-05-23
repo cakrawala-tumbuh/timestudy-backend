@@ -1,8 +1,11 @@
-"""Business logic for admin JWT authentication: password hashing, token creation, and verification."""
+"""Business logic for admin JWT authentication.
+
+Covers password hashing, token creation, and verification.
+"""
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -28,7 +31,7 @@ def verify_password(plain: str, hashed: str) -> bool:
 def create_access_token(subject: str | int, expires_delta: timedelta | None = None) -> str:
     """Create a signed JWT access token for *subject*."""
     settings = get_settings()
-    expire = datetime.now(timezone.utc) + (
+    expire = datetime.now(UTC) + (
         expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     payload = {"sub": str(subject), "exp": expire, "type": "access"}
@@ -38,7 +41,7 @@ def create_access_token(subject: str | int, expires_delta: timedelta | None = No
 def create_refresh_token(subject: str | int) -> str:
     """Create a signed JWT refresh token for *subject*."""
     settings = get_settings()
-    expire = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    expire = datetime.now(UTC) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
     payload = {"sub": str(subject), "exp": expire, "type": "refresh"}
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 

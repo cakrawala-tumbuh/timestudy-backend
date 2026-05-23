@@ -2,7 +2,8 @@
 
 from app.routers.auth import router as auth_router
 from app.routers.daily_logs import router as daily_logs_router
-from app.routers.oauth import clients_router, router as oauth_router
+from app.routers.oauth import clients_router
+from app.routers.oauth import router as oauth_router
 from app.routers.respondents import router as respondents_router
 
 __all__ = [

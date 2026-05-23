@@ -12,9 +12,7 @@ from app.schemas.user import RefreshTokenRequest, Token, UserCreate, UserLogin, 
 from app.services.auth_service import (
     authenticate_user,
     build_token_pair,
-    create_access_token,
     decode_token,
-    get_user_from_token,
     hash_password,
 )
 
@@ -51,10 +49,10 @@ def refresh_token(payload: RefreshTokenRequest, db: Session = Depends(get_db)) -
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token"
             )
         user_id = int(data["sub"])
-    except (JWTError, KeyError, ValueError):
+    except (JWTError, KeyError, ValueError) as err:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token"
-        )
+        ) from err
     user = db.query(User).filter(User.id == user_id).first()
     if not user or not user.is_active:
         raise HTTPException(
@@ -77,13 +75,9 @@ def create_user(
 ) -> User:
     """Create a new admin user. Requires superuser privilege."""
     if db.query(User).filter(User.username == payload.username).first():
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="Username already exists"
-        )
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists")
     if db.query(User).filter(User.email == payload.email).first():
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="Email already exists"
-        )
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already exists")
     user = User(
         username=payload.username,
         email=str(payload.email),

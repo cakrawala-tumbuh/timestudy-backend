@@ -42,9 +42,7 @@ def _apply_log_data(log: DailyLog, payload: DailyLogCreate | DailyLogUpdate) -> 
         + log.pct_recovery
     )
     log.total_pct = round(pct_sum, 2)
-    log.total_jam_hitung = _calculate_total_jam(
-        log.jam_masuk, log.jam_pulang, log.menit_istirahat
-    )
+    log.total_jam_hitung = _calculate_total_jam(log.jam_masuk, log.jam_pulang, log.menit_istirahat)
 
 
 # ---------------------------------------------------------------------------
@@ -85,9 +83,7 @@ def list_daily_logs(
     )
 
 
-@router.get(
-    "/{log_id}", response_model=DailyLogResponse, summary="Get daily log (admin)"
-)
+@router.get("/{log_id}", response_model=DailyLogResponse, summary="Get daily log (admin)")
 def get_daily_log(
     log_id: int,
     db: Session = Depends(get_db),
@@ -100,9 +96,7 @@ def get_daily_log(
     return log
 
 
-@router.patch(
-    "/{log_id}", response_model=DailyLogResponse, summary="Update daily log (admin)"
-)
+@router.patch("/{log_id}", response_model=DailyLogResponse, summary="Update daily log (admin)")
 def update_daily_log(
     log_id: int,
     payload: DailyLogUpdate,
@@ -120,7 +114,10 @@ def update_daily_log(
 
 
 @router.delete(
-    "/{log_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None, summary="Delete daily log (admin)"
+    "/{log_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=None,
+    summary="Delete daily log (admin)",
 )
 def delete_daily_log(
     log_id: int,

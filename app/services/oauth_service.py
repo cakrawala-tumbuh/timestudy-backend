@@ -1,11 +1,14 @@
-"""Business logic for the OAuth2 PKCE authorization server: PKCE verification, code exchange, and token management."""
+"""Business logic for the OAuth2 PKCE authorization server.
+
+Covers PKCE verification, code exchange, and token management.
+"""
 
 from __future__ import annotations
 
 import base64
 import hashlib
 import secrets
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
@@ -66,9 +69,7 @@ def create_authorization_code(
     """Generate and persist a new authorization code."""
     settings = get_settings()
     code = secrets.token_urlsafe(48)
-    expires_at = datetime.now(timezone.utc) + timedelta(
-        seconds=settings.OAUTH_CODE_EXPIRE_SECONDS
-    )
+    expires_at = datetime.now(UTC) + timedelta(seconds=settings.OAUTH_CODE_EXPIRE_SECONDS)
     auth_code = OAuthAuthorizationCode(
         client_id=client_id,
         resp_id=resp_id,
@@ -113,16 +114,16 @@ def exchange_code_for_token(
         return None
     if auth_code.redirect_uri != redirect_uri:
         return None
-    if not verify_pkce_challenge(code_verifier, auth_code.code_challenge, auth_code.code_challenge_method):
+    if not verify_pkce_challenge(
+        code_verifier, auth_code.code_challenge, auth_code.code_challenge_method
+    ):
         return None
 
     # All checks pass — issue token
     settings = get_settings()
     access_token = secrets.token_urlsafe(64)
     refresh_token = secrets.token_urlsafe(64)
-    expires_at = datetime.now(timezone.utc) + timedelta(
-        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-    )
+    expires_at = datetime.now(UTC) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     token = OAuthToken(
         client_id=client_id,
         resp_id=auth_code.resp_id,
@@ -165,9 +166,7 @@ def refresh_access_token(
 
     settings = get_settings()
     new_access = secrets.token_urlsafe(64)
-    new_expires = datetime.now(timezone.utc) + timedelta(
-        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-    )
+    new_expires = datetime.now(UTC) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     token.access_token = new_access
     token.expires_at = new_expires
     db.commit()
@@ -187,25 +186,20 @@ def revoke_token(db: Session, *, token_value: str) -> bool:
     token = (
         db.query(OAuthToken)
         .filter(
-            (OAuthToken.access_token == token_value)
-            | (OAuthToken.refresh_token == token_value)
+            (OAuthToken.access_token == token_value) | (OAuthToken.refresh_token == token_value)
         )
         .first()
     )
     if not token:
         return False
-    token.revoked_at = datetime.now(timezone.utc)
+    token.revoked_at = datetime.now(UTC)
     db.commit()
     return True
 
 
 def get_token_respondent(db: Session, access_token: str) -> Respondent | None:
     """Return the Respondent associated with *access_token*, or None if invalid."""
-    token = (
-        db.query(OAuthToken)
-        .filter(OAuthToken.access_token == access_token)
-        .first()
-    )
+    token = db.query(OAuthToken).filter(OAuthToken.access_token == access_token).first()
     if not token or not token.is_active():
         return None
     return (

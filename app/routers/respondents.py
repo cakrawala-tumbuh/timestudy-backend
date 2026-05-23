@@ -30,9 +30,7 @@ def list_respondents(
     query = db.query(Respondent)
     if search:
         pattern = f"%{search}%"
-        query = query.filter(
-            Respondent.resp_id.ilike(pattern) | Respondent.name.ilike(pattern)
-        )
+        query = query.filter(Respondent.resp_id.ilike(pattern) | Respondent.name.ilike(pattern))
     total = query.count()
     items = query.offset((page - 1) * size).limit(size).all()
     return PagedResponse(
@@ -45,7 +43,10 @@ def list_respondents(
 
 
 @router.post(
-    "", response_model=RespondentResponse, status_code=status.HTTP_201_CREATED, summary="Create respondent"
+    "",
+    response_model=RespondentResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Create respondent",
 )
 def create_respondent(
     payload: RespondentCreate,
@@ -115,7 +116,10 @@ def update_respondent(
 
 
 @router.delete(
-    "/{resp_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None, summary="Delete respondent"
+    "/{resp_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=None,
+    summary="Delete respondent",
 )
 def delete_respondent(
     resp_id: str,

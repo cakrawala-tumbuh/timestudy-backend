@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Literal
 
 from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint
@@ -17,9 +17,7 @@ class DailyLog(Base):
     """Daily work time log submitted by a respondent."""
 
     __tablename__ = "daily_logs"
-    __table_args__ = (
-        UniqueConstraint("resp_id", "tanggal", name="uq_daily_log_resp_date"),
-    )
+    __table_args__ = (UniqueConstraint("resp_id", "tanggal", name="uq_daily_log_resp_date"),)
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     resp_id: Mapped[str] = mapped_column(
@@ -49,15 +47,13 @@ class DailyLog(Base):
 
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_synced: Mapped[bool] = mapped_column(Boolean, default=False)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=lambda: datetime.now(timezone.utc)
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
     )
 
-    respondent: Mapped["Respondent"] = relationship(  # noqa: F821
+    respondent: Mapped[Respondent] = relationship(  # noqa: F821
         "Respondent", back_populates="daily_logs"
     )
