@@ -12,7 +12,6 @@ extensions = [
     "sphinx.ext.viewcode",       # [source] links to highlighted source
     "sphinx.ext.intersphinx",    # cross-project links (Python, SQLAlchemy)
     "autoapi.extension",         # automatic API docs from source without import
-    "myst_parser",               # write docs in Markdown
     "sphinx_copybutton",         # copy-button on code blocks
 ]
 
