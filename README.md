@@ -1,5 +1,11 @@
 # TimeStudy — Backend API
 
+[![CI](https://github.com/cakrawala-tumbuh/timestudy-backend/actions/workflows/ci.yml/badge.svg)](https://github.com/cakrawala-tumbuh/timestudy-backend/actions/workflows/ci.yml)
+[![Publish](https://github.com/cakrawala-tumbuh/timestudy-backend/actions/workflows/publish.yml/badge.svg)](https://github.com/cakrawala-tumbuh/timestudy-backend/actions/workflows/publish.yml)
+[![Docker Image](https://img.shields.io/badge/container-ghcr.io%2Fcakrawala--tumbuh%2Ftimestudy--backend-blue?logo=docker)](https://github.com/cakrawala-tumbuh/timestudy-backend/pkgs/container/timestudy-backend)
+[![Documentation Status](https://readthedocs.org/projects/timestudy-backend/badge/?version=latest)](https://timestudy-backend.readthedocs.io/)
+[![codecov](https://codecov.io/gh/cakrawala-tumbuh/timestudy-backend/branch/master/graph/badge.svg)](https://codecov.io/gh/cakrawala-tumbuh/timestudy-backend)
+
 REST API for the TimeStudy system. Manages respondents, daily work-time logs, and provides an **OAuth2 PKCE** authorization server for the Android client app.
 
 ## Tech Stack
